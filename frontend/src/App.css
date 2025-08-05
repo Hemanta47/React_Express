@@ -1,24 +1,17 @@
 @import "tailwindcss";
 
-* {
-  padding: 0;
-  margin: 0;
-}
-
 html,
 body {
-  height: 100vh;
+  padding: 0;
+  margin: 0;
   width: 100%;
-  display: flex;
-  justify-content: flex-start;
-  /* padding: 0.5rem; */
-  background: #111;
-  color: #fff;
+  height: 100vh;
+  background: #fff;
+  color: #111;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-.detail {
-  border: 2px solid #fff;
-  padding: 1rem;
-  margin-top: 1rem;
+#root {
+  height: 100%;
+  width: 100%;
 }

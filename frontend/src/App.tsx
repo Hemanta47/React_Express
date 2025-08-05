@@ -11,7 +11,7 @@ function App() {
   return (
     // <RegisterForm />
     <>
-      <div className='p-1.5 h-full w-full'>
+      <div className='h-full w-full flex flex-col'>
         <Navbar />
         <Routes>
           <Route path='/' element={<Home />}></Route>

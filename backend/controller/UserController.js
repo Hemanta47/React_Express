@@ -2,10 +2,10 @@ const Users = require("../model/UserModel");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 
-async function getUser(req, res, next) {
-  const profile = await Users.find();
+async function getUserList(req, res, next) {
+  const users = await Users.find();
   res.status(200).json({
-    profile,
+    data: users,
   });
 }
 
@@ -20,7 +20,7 @@ async function createUser(req, res, next) {
   const existingUser = await Users.findOne({ email });
   if (existingUser) {
     return res.status(400).json({
-      message: "User with this email already existed",
+      message: "User Existed",
     });
   }
 
@@ -41,7 +41,7 @@ async function createUser(req, res, next) {
 }
 
 async function Loginhandler(req, res) {
-  const { email, password } = req.body; // ✅ was missing
+  const { email, password } = req.body;
 
   console.log("Login data:", req.body);
 
@@ -55,7 +55,7 @@ async function Loginhandler(req, res) {
 
   if (!existingUser) {
     return res.status(400).json({
-      message: "User with this email doesn't exist",
+      message: "Invalid credentials",
     });
   }
 
@@ -81,7 +81,7 @@ async function Loginhandler(req, res) {
 }
 
 module.exports = {
-  getUser,
+  getUserList,
   createUser,
   Loginhandler,
 };

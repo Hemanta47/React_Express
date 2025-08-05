@@ -1,88 +1,127 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, TextField } from "@mui/material";
 import axios from "axios";
-import { useState } from "react"
+import { useForm } from "react-hook-form";
+import { z } from 'zod'
+
+
+const userSchema = z.object({
+    name: z.string().min(1, { message: "Name required" }),
+    email: z.string().email(),
+    password: z.string().min(8, { message: "Password need to be 8 character" }),
+})
+
+type register = z.infer<typeof userSchema>
 
 // import MyInformation from "./MyInformation"
 export default function RegisterForm() {
-    const [name, setName] = useState("");
-    const [password, setPassword] = useState("");
-    const [email, setEmail] = useState("");
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!name || !email || !password) {
-            alert("All fields are required");
-            return;
+    const {
+        register,
+        handleSubmit,
+        formState: { errors }
+    } = useForm<register>({
+        resolver: zodResolver(userSchema),
+        defaultValues: {
+            name: "",
+            email: "",
+            password: ""
         }
-        const finalData = {
-            name,
-            email,
-            password,
-        }
-        axios.post("http://localhost:3000/users/create", finalData)
+    })
+
+    const onSubmit = (data: register) => {
+        console.log(data);
+        axios
+            .post("http://localhost:3000/users/create", data)
             .then(res => {
-                alert("User registered successfully")
                 console.log(res.data);
-                setName("");
-                setEmail("");
-                setPassword("");
+                alert("User Created")
             })
             .catch(err => {
                 const errors = err.response?.data?.message || "An error occured"
                 console.error(errors);
-                alert(errors);
+                alert(errors)
             });
-    };
-
-    const handleName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
-    };
-
-
-    const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(e.target.value);
-    };
-
-    const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEmail(e.target.value);
-    };
-
-
-
-
+    }
     return (
-        <>
-            <h1 style={{ margin: "1rem 0" }}>Register Form</h1>
-            <form
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: '10px',
-                    maxWidth: '300px',
-                    margin: 'auto'
-                }}
-                onSubmit={handleSubmit}
-            >
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                    <label htmlFor="Name">
-                        Name:
-                    </label>
-                    <input className="border border-white" type="text" name="Name" onChange={handleName} value={name} id="Name" />
-                </div>
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                    <label htmlFor="Email">
-                        Email:
-                    </label>
-                    <input className="border border-white" type="email" name="Email" onChange={handleEmail} value={email} id="Email" />
-                </div>
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                    <label htmlFor="Password">
-                        Password:
-                    </label>
-                    <input className="border border-white" type="password" name="Password" onChange={handlePassword} value={password} id="Password" />
-                </div>
-                <button type="submit" style={{ padding: ".5rem", background: "blue", color: "white", fontSize: "1.3rem" }}>Register</button>
-            </form>
-        </>
+        <div className="w-full h-full flex justify-center items-center bg-gradient-to-br from-gray-500 via-sky-900 to-blue-700">
+            <div className="flex flex-col backdrop-blur-md bg-black/30 border border-white/20 shadow-xl rounded-2xl p-8 w-[90%] max-w-md text-white">
+                <h1 className="text-3xl font-bold text-blue-400 text-center mb-6">Register Form</h1>
+                <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
+                    <TextField
+                        label="Name"
+                        {...register("name")}
+                        placeholder="John"
+                        error={!!errors.name}
+                        helperText={errors.name?.message}
+                        fullWidth
+                        InputLabelProps={{ style: { color: "#60a5fa" } }}
+                        sx={{
+                            "& label.Mui-focused": { color: "#3b82f6" },
+                            "& .MuiOutlinedInput-root": {
+                                "& fieldset": { borderColor: "#60a5fa" },
+                                "&:hover fieldset": { borderColor: "#3b82f6" },
+                                "&.Mui-focused fieldset": { borderColor: "#3b82f6" },
+                                color: "#fff",
+                            },
+                            "& .MuiFormHelperText-root": {
+                                fontSize: ".9rem",
+                                fontWeight: "bold",
+                            },
+                            input: { color: "#fff" },
+                        }}
+                    />
+                    <TextField
+                        label="Email"
+                        {...register("email")}
+                        placeholder="john@gmail.com"
+                        error={!!errors.email}
+                        helperText={errors.email?.message}
+                        fullWidth
+                        InputLabelProps={{ style: { color: "#60a5fa" } }}
+                        sx={{
+                            "& label.Mui-focused": { color: "#3b82f6" },
+                            "& .MuiOutlinedInput-root": {
+                                "& fieldset": { borderColor: "#60a5fa" },
+                                "&:hover fieldset": { borderColor: "#3b82f6" },
+                                "&.Mui-focused fieldset": { borderColor: "#3b82f6" },
+                                color: "#fff",
+                            },
+                            "& .MuiFormHelperText-root": {
+                                fontSize: ".9rem",
+                                fontWeight: "bold",
+                            },
+                            input: { color: "#fff" },
+                        }}
+                    />
+                    <TextField
+                        label="Password"
+                        {...register("password")}
+                        placeholder="password"
+                        error={!!errors.password}
+                        helperText={errors.password?.message}
+                        fullWidth
+                        InputLabelProps={{ style: { color: "#60a5fa" } }}
+                        sx={{
+                            "& label.Mui-focused": { color: "#3b82f6" },
+                            "& .MuiOutlinedInput-root": {
+                                "& fieldset": { borderColor: "#60a5fa" },
+                                "&:hover fieldset": { borderColor: "#3b82f6" },
+                                "&.Mui-focused fieldset": { borderColor: "#3b82f6" },
+                                color: "#fff",
+                            },
+                            "& .MuiFormHelperText-root": {
+                                fontSize: ".9rem",
+                                fontWeight: "bold",
+                            },
+                            input: { color: "#fff" },
+                        }}
+                    />
+
+                    <Button type="submit" variant="contained">Register</Button>
+                </form>
+            </div>
+        </div>
     );
 }
 

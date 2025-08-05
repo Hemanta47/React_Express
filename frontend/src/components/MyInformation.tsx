@@ -1,6 +1,6 @@
 export default function MyInformation(
     { id, name, email }: {
-        id: number,
+        id: string,
         name: string,
         email?: string
     }) {
