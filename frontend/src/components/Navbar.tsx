@@ -1,14 +1,19 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { User } from "lucide-react";
+import { useContext } from "react";
+import { AuthContext } from "../App";
 
 export default function Navbar() {
-    const accessToken = localStorage.getItem("token");
-    const navigate = useNavigate();
+    const { isAuth, setAuthState } = useContext(AuthContext);
 
     const logoutHandler = () => {
-        localStorage.removeItem("token");
-        navigate("/login");
-    };
+        localStorage.removeItem("token")
+
+        setAuthState((prev) => ({
+            ...prev,
+            isAuth: true
+        }))
+    }
 
     return (
         <header className="w-full h-20 bg-gray-900 px-6 shadow-md">
@@ -33,7 +38,7 @@ export default function Navbar() {
                         About
                     </NavLink>
 
-                    {accessToken ? (
+                    {isAuth ? (
                         <>
                             <div className="flex items-center gap-2 pl-3 border-l border-gray-600">
                                 <User className="text-blue-400" size={24} />
