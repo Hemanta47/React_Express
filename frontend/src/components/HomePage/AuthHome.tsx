@@ -25,7 +25,7 @@ export default function AuthHome() {
             }
         })
             .then(response => {
-                console.log(response.data.data)
+                console.log(response.data)
                 setUserData(response.data.data)
             })
             .catch(error => alert(error))

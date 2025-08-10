@@ -7,6 +7,7 @@ import Register from './Pages/Register';
 import Login from './Pages/Login';
 import { createContext, useEffect, useState } from 'react';
 import axios from 'axios';
+import CreateQuesSetPage from './Pages/QuestionSet/CreateQuesSetPage';
 
 export interface IAuthContext {
   isAuth: boolean,
@@ -66,6 +67,7 @@ function App() {
             <Route path='/about' element={<About />}></Route>
             <Route path='/register' element={<Register />}></Route>
             <Route path='/login' element={<Login />}></Route>
+            <Route path='/admin/questionset/create' element={<CreateQuesSetPage />}></Route>
             <Route path='*' element={<div>404 Not Found</div>}></Route>
           </Routes>
         </div>

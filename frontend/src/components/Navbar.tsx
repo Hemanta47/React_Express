@@ -1,10 +1,10 @@
 import { NavLink } from "react-router-dom";
 import { User } from "lucide-react";
 import { useContext } from "react";
-import { AuthContext } from "../App";
+import { AuthContext, type IAuthContext } from "../App";
 
 export default function Navbar() {
-    const { isAuth, setAuthState } = useContext(AuthContext);
+    const { isAuth, setAuthState } = useContext<IAuthContext>(AuthContext);
 
     const logoutHandler = () => {
         localStorage.removeItem("token")
@@ -65,8 +65,10 @@ export default function Navbar() {
                             >
                                 Register
                             </NavLink>
+
                         </>
                     )}
+
                 </ul>
             </nav>
         </header>
