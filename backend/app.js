@@ -9,6 +9,7 @@ const cors = require("cors");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/userRoute");
 const professorRouter = require("./routes/professor");
+const adminRouter = require("./routes/adminRoutes");
 const app = express();
 
 app.use(logger("dev"));
@@ -21,6 +22,7 @@ app.use(cors());
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/professor", professorRouter);
+app.use("/api/admin", adminRouter);
 
 main().catch((err) => console.log(err));
 

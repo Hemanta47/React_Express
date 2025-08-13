@@ -1,12 +1,12 @@
 import { Button, TextField } from "@mui/material";
+import axios from "axios";
 import { FormProvider, useFieldArray, useForm, useFormContext } from "react-hook-form"
 
 interface QuestionSetForm {
     title: string,
     questions: {
         questionText: string,
-        choices: { text: string, label: string }[],
-        correctAnswer: string,
+        choices: { text: string, label: string, correctAnswer: boolean, }[],
     }[];
 }
 
@@ -19,17 +19,35 @@ function CreateQuesSetForm() {
         defaultValues
     });
 
-    const { watch, register } = methods
+    const { watch, register, handleSubmit } = methods
     console.log('Form value', watch());
+
+    const accessToken = localStorage.getItem("token")
+
+    const onSubmit = ((data: QuestionSetForm) => {
+        axios.post("http://localhost:3000/api/admin/questionset/create", data, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            },
+        })
+            .then(response => {
+                console.log(response);
+            })
+            .catch(err => {
+                console.log(err);
+
+            })
+    })
 
 
     return (
         <div className="h-full w-full p-2">
             <FormProvider {...methods}>
-                <form>
+                <form onSubmit={handleSubmit(onSubmit)}>
                     <TextField {...register('title')} variant="outlined" label="Title" />
                     {/* <TextField variant="outlined" label=""/> */}
                     <CreateQuestion />
+                    <Button type="submit">Create</Button>
                 </form>
             </FormProvider>
         </div>
@@ -49,7 +67,6 @@ function CreateQuestion() {
         append({
             questionText: '',
             choices: [],
-            correctAnswer: ''
         });
     };
 
@@ -89,8 +106,9 @@ function CreateChoices({ questionIndex }: { questionIndex: number }) {
 
     const AddChoicesHandler = () => {
         append({
-            label: '',
-            text: ''
+            label: fields?.length.toString(),
+            text: '',
+            correctAnswer: false
         })
     };
 
@@ -102,7 +120,9 @@ function CreateChoices({ questionIndex }: { questionIndex: number }) {
                 }
                 return <div key={index}>
                     <div>
-                        <TextField {...register(`questions.${questionIndex}.choices.${index}`)} placeholder="Enter Choice" />
+                        <TextField {...register(`questions.${questionIndex}.choices.${index}.text`)} placeholder="Enter Choice" />
+
+                        <TextField type="checkbox" {...register(`questions.${questionIndex}.choices.${index}.correctAnswer`)} />
                         <Button type="button" onClick={RemoveChoiceController}>remove</Button>
                     </div>
                 </div>

@@ -20,12 +20,12 @@ const QuestionSetSchema = new mongoose.Schema({
             type: String,
             required: true,
           },
+          correctAnswer: {
+            type: Boolean,
+            default: false,
+          },
         },
       ],
-      correctAnswer: {
-        type: String,
-        required: true,
-      },
     },
   ],
   createdBy: {
