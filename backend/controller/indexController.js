@@ -1,3 +1,5 @@
+// api/verify/me - get
+// users
 function verifyUserController(req, res) {
   const user = req.user;
   if (user) {

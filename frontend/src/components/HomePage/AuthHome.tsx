@@ -2,7 +2,6 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import MyInformation from "../MyInformation"
 
-
 export interface InAuthUser {
     _id: string
     name: string
@@ -12,16 +11,14 @@ export interface InAuthUser {
     __v: number
 }
 
-export default function AuthHome() {
+export default function AuthHome({ token }: { token: string }) {
 
     const [userData, setUserData] = useState<InAuthUser[]>([])
 
-    const accessToken = localStorage.getItem("token")
-
     async function fetchData() {
-        await axios.get("http://localhost:3000/api/verify/me", {
+        await axios.get("http://localhost:3000/users/list", {
             headers: {
-                Authorization: `Bearer ${accessToken}`
+                Authorization: `Bearer ${token}`
             }
         })
             .then(response => {
@@ -34,7 +31,7 @@ export default function AuthHome() {
         fetchData()
     }, [])
     return (
-        <div>
+        <div className="p-2 w-full grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 items-start">
             {
                 userData?.map((user, index) => {
                     return (

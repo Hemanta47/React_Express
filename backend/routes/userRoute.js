@@ -7,7 +7,7 @@ const {
 } = require("../controller/UserController");
 const { validateTokenMiddleware } = require("../middleware/AuthMiddleware");
 
-router.get("/", validateTokenMiddleware, getUserList);
+router.get("/list", validateTokenMiddleware, getUserList);
 router.post("/create", createUser);
 router.post("/login", Loginhandler);
 

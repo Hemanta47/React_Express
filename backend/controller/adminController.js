@@ -1,5 +1,6 @@
 const QuestionSet = require("../model/QuestionSetModel");
 
+// api/admin/questionset/create - post
 async function createQuestionSet(req, res) {
   try {
     const data = req.body;

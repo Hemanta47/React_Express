@@ -2,6 +2,7 @@ const Users = require("../model/UserModel");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 
+// users/list - get
 async function getUserList(req, res, next) {
   const users = await Users.find();
   res.status(200).json({
@@ -9,6 +10,7 @@ async function getUserList(req, res, next) {
   });
 }
 
+// users/register - post
 async function createUser(req, res, next) {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
@@ -40,6 +42,7 @@ async function createUser(req, res, next) {
   });
 }
 
+// users/login - post
 async function Loginhandler(req, res) {
   const { email, password } = req.body;
 

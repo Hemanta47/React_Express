@@ -44,7 +44,7 @@ export default function RegisterForm() {
             });
     }
     return (
-        <div className="w-full h-full flex justify-center items-center bg-gradient-to-br from-gray-500 via-sky-900 to-blue-700">
+        <div className="w-full h-full flex justify-center items-center bg-gradient-to-br from-blue-400 via-sky-900 to-blue-700">
             <div className="flex flex-col backdrop-blur-md bg-black/30 border border-white/20 shadow-xl rounded-2xl p-8 w-[90%] max-w-md text-white">
                 <h1 className="text-3xl font-bold text-blue-400 text-center mb-6">Register Form</h1>
                 <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>

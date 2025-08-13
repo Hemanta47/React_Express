@@ -32,7 +32,7 @@ function App() {
     const accessToken = localStorage.getItem("token")
 
     async function fetchData() {
-      await axios.get("http://localhost:3000/users/", {
+      await axios.get("http://localhost:3000/api/verify/me", {
         headers: {
           Authorization: `Bearer ${accessToken}`
         }
@@ -43,7 +43,7 @@ function App() {
             isAuth: true
           }))
         })
-        .catch(error => alert(error))
+        .catch(error => { })
     }
 
     fetchData()

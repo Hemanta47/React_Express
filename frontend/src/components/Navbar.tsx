@@ -11,7 +11,7 @@ export default function Navbar() {
 
         setAuthState((prev) => ({
             ...prev,
-            isAuth: true
+            isAuth: false
         }))
     }
 

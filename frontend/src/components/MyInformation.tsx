@@ -5,19 +5,13 @@ export default function MyInformation(
         email?: string
     }) {
     return (
-        <>
-            <div style={{ margin: "0 0 10px", border: "2px solid #fff", padding: "1rem", display: "flex", flexDirection: "column", gap: ".5rem" }}>
-                <p style={{ fontSize: "2rem" }}>{name} Info:</p>
-                <p>Id: {id}</p>
-                <p>Name: {name}</p>
-                {
-                    email ? <p>Email: {email}</p>
-                        : <p>
-                            Email: Not Given
-                        </p>
-                }
-            </div>
-        </>
-    )
+        <div className="bg-white rounded-lg shadow-md p-4 border border-gray-600 flex flex-col gap-2 hover:shadow-md hover:shadow-blue-500">
+            <h2 className="text-lg font-bold text-gray-900">{name} Info:</h2>
+            <p className="text-sm text-gray-600 break-all">Id: {id}</p>
+            <p className="text-sm text-gray-600">Name: {name}</p>
+            <p className="text-sm text-gray-600">
+                Email: {email || "Not Given"}
+            </p>
+        </div>
+    );
 }
-

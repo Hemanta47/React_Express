@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../App";
 
 const LoginSchema = z.object({
     email: z.string().email({ message: "Invalid email format" }),
@@ -14,6 +16,7 @@ type Credentials = z.infer<typeof LoginSchema>;
 
 export default function LoginForm() {
 
+    const { setAuthState } = useContext(AuthContext)
     const navigate = useNavigate();
 
     const {
@@ -35,7 +38,13 @@ export default function LoginForm() {
             .then((response) => {
                 const accessToken = response.data.accessToken;
                 localStorage.setItem("token", accessToken);
-                navigate("/")
+
+                setAuthState((prev) => ({
+                    ...prev,
+                    isAuth: true,
+                }));
+
+                navigate("/");
             })
             .catch((err) => {
                 console.error("Login error:", err);
