@@ -1,11 +1,13 @@
 import axios from "axios";
-import { Button, TextField } from "@mui/material";
+import { Button, IconButton, InputAdornment, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../App";
+import { Eye, EyeClosed } from "lucide-react";
+import { jwtDecode } from "jwt-decode";
 
 const LoginSchema = z.object({
     email: z.string().email({ message: "Invalid email format" }),
@@ -17,6 +19,7 @@ type Credentials = z.infer<typeof LoginSchema>;
 export default function LoginForm() {
 
     const { setAuthState } = useContext(AuthContext)
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
     const {
@@ -31,29 +34,33 @@ export default function LoginForm() {
         },
     });
 
-    const onSubmit = (data: Credentials) => {
-        console.log(data);
-        axios
-            .post("http://localhost:3000/users/login", data)
-            .then((response) => {
-                const accessToken = response.data.accessToken;
-                localStorage.setItem("token", accessToken);
+    const onSubmit = async (data: Credentials) => {
+        try {
+            const response = await axios.post("http://localhost:3000/users/login", data);
+            const accessToken = response.data.accessToken;
+            localStorage.setItem("token", accessToken);
 
-                setAuthState((prev) => ({
-                    ...prev,
-                    isAuth: true,
-                }));
+            // decode role from JWT
+            const decoded: { role: "admin" | "professional"; id: string } = jwtDecode(accessToken);
 
-                navigate("/");
-            })
-            .catch((err) => {
-                console.error("Login error:", err);
-                alert("Login failed: " + (err.response?.data?.message || "Unknown error"));
-            });
+            // update auth state
+            setAuthState({ isAuth: true, role: decoded.role });
+
+            // redirect based on role
+            if (decoded.role === "admin") {
+                navigate("/admin/", { replace: true });
+            } else if (decoded.role === "professional") {
+                navigate("/professional/home", { replace: true });
+            }
+        } catch (err: any) {
+            console.error("Login failed:", err);
+            alert(err.response?.data?.message || "Login failed");
+        }
     };
 
+
     return (
-        <div className="w-full h-full flex justify-center items-center bg-gradient-to-br from-blue-400 via-sky-900 to-blue-700">
+        <div className="w-full h-full flex justify-center items-center bg-gradient-to-br from-slate-900 via-sky-900 to-blue-500">
             <div className="backdrop-blur-md bg-black/30 border border-white/20 shadow-xl rounded-2xl p-8 w-[90%] max-w-md text-white">
                 <h1 className="text-3xl font-bold text-blue-400 text-center mb-6">Login</h1>
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
@@ -88,7 +95,7 @@ export default function LoginForm() {
                     <TextField
                         label="Password"
                         id="password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         {...register("password")}
                         error={!!errors.password}
                         helperText={errors.password?.message}
@@ -96,6 +103,15 @@ export default function LoginForm() {
                         fullWidth
                         variant="outlined"
                         InputLabelProps={{ style: { color: "#60a5fa" } }}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                                        {showPassword ? <Eye className="text-white" /> : <EyeClosed className="text-white" />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                         sx={{
                             "& label.Mui-focused": { color: "#3b82f6" },
                             "& .MuiOutlinedInput-root": {

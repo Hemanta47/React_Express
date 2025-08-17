@@ -6,7 +6,7 @@ async function createQuestionSet(req, res) {
     const data = req.body;
     console.log(data);
 
-    const { id } = req.user; // from JWT middleware
+    const { id } = req.user;
 
     const finalData = {
       ...data,

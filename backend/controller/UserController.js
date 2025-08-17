@@ -1,17 +1,43 @@
-const Users = require("../model/UserModel");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
+const Users = require("../model/UserModel");
 
 // users/list - get
-async function getUserList(req, res, next) {
-  const users = await Users.find();
-  res.status(200).json({
-    data: users,
-  });
+async function getUserList(req, res) {
+  try {
+    const users = await Users.aggregate([
+      {
+        $lookup: {
+          from: "profiles",
+          localField: "_id",
+          foreignField: "user",
+          as: "profile",
+        },
+      },
+      {
+        $unwind: {
+          path: "$profile",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          role: 1,
+          "profile.bio": 1,
+          "profile.profilePicture": 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({ data: users });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 }
 
 // users/register - post
-async function createUser(req, res, next) {
+async function createUser(req, res) {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
     return res.status(400).json({

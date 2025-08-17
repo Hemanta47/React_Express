@@ -10,6 +10,7 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/userRoute");
 const professorRouter = require("./routes/professor");
 const adminRouter = require("./routes/adminRoutes");
+const questionRouter = require("./routes/questionRoutes");
 const app = express();
 
 app.use(logger("dev"));
@@ -23,6 +24,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/professor", professorRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/questions", questionRouter);
 
 main().catch((err) => console.log(err));
 

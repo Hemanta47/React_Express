@@ -1,12 +1,9 @@
 var express = require("express");
+const { createProfile, getProfile } = require("../controller/ProfileContoller");
+const { validateTokenMiddleware } = require("../middleware/AuthMiddleware");
 var router = express.Router();
 
-router.get("/", (req, res, next) => {
-  res.json({
-    name: "professor name",
-    college: "islington college",
-    tech: ["JavaScript", "Express", "React"],
-  });
-});
+router.get("/profile/:id", validateTokenMiddleware, getProfile);
+router.post("/profile/create", validateTokenMiddleware, createProfile);
 
 module.exports = router;
