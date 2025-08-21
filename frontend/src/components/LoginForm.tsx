@@ -44,7 +44,7 @@ export default function LoginForm() {
             const decoded: { role: "admin" | "professional"; id: string } = jwtDecode(accessToken);
 
             // update auth state
-            setAuthState({ isAuth: true, role: decoded.role });
+            setAuthState({ id: decoded.id, isAuth: true, role: decoded.role });
 
             // redirect based on role
             if (decoded.role === "admin") {

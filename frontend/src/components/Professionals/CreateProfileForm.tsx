@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import { Delete, Upload } from "lucide-react";
 
-// ✅ Zod Schema
+// Zod Schema
 const skillSchema = z.object({
     name: z.string().min(1, "Skill name is required"),
     level: z.enum(["Beginner", "Intermediate", "Advanced"]),

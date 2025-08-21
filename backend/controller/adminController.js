@@ -1,6 +1,6 @@
 const QuestionSet = require("../model/QuestionSetModel");
 
-// api/admin/questionset/create - post
+// POST: /api/admin/questionset/create
 async function createQuestionSet(req, res) {
   try {
     const data = req.body;
@@ -22,7 +22,6 @@ async function createQuestionSet(req, res) {
       data: createSet,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       message: error.message,
       error,

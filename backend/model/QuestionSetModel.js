@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const QuestionSetSchema = new mongoose.Schema({
+  option: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Option",
+    required: true,
+  },
   title: {
     type: String,
     required: true,

@@ -24,9 +24,7 @@ function AttemptQuizForm({
         ...questionSet,
     };
     const methods = useForm({ defaultValues });
-
-    const { watch, register, handleSubmit } = methods;
-    console.log("form values => ", watch());
+    const { register, handleSubmit } = methods;
 
     const onSubmitHandler = (data: IAttempQuestionForm) => {
         const accessToken = localStorage.getItem("token");
@@ -50,21 +48,37 @@ function AttemptQuizForm({
                 },
             })
             .then((res) => {
+                console.log(res);
                 alert("Answer Set Updated Successfully");
             })
-            .catch((err) => { });
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
     return (
-        <div>
+        <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-md mt-8">
             <FormProvider {...methods}>
-                <form onSubmit={handleSubmit(onSubmitHandler)}>
+                <form onSubmit={handleSubmit(onSubmitHandler)} className="space-y-6">
                     <div>
-                        <label>Title</label>
-                        <input {...register("title")} disabled className="pl-2" />
+                        <label className="block font-semibold text-gray-700 mb-1">
+                            Quiz Title
+                        </label>
+                        <input
+                            {...register("title")}
+                            disabled
+                            className="w-full px-3 py-2 border rounded-md bg-gray-100 text-gray-600"
+                        />
                     </div>
+
                     <CreateQuestions />
-                    <button type="submit">Submit Answer</button>
+
+                    <button
+                        type="submit"
+                        className="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition"
+                    >
+                        Submit Answers
+                    </button>
                 </form>
             </FormProvider>
         </div>
@@ -73,55 +87,51 @@ function AttemptQuizForm({
 
 function CreateQuestions() {
     const { control } = useFormContext<IAttempQuestionForm>();
-
     const { fields } = useFieldArray({
         control,
         name: "questions",
     });
 
     return (
-        <div>
-            <h1>Questions</h1>
-            {fields?.map((field, index) => {
-                return (
-                    <div key={index}>
-                        <p>{field?.questionText}</p>
-                        <CreateChoices questionIndex={index} />
-                    </div>
-                );
-            })}
+        <div className="space-y-6">
+            {fields?.map((field, index) => (
+                <div key={index} className="p-4 bg-gray-50 rounded-lg shadow-sm">
+                    <p className="font-medium text-gray-800 mb-2">
+                        {index + 1}. {field?.questionText}
+                    </p>
+                    <CreateChoices questionIndex={index} />
+                </div>
+            ))}
         </div>
     );
 }
 
 function CreateChoices({ questionIndex }: { questionIndex: number }) {
     const { register, control } = useFormContext<IAttempQuestionForm>();
-
     const { fields } = useFieldArray({
         control,
         name: `questions.${questionIndex}.choices`,
     });
 
     return (
-        <div>
-            {fields?.map((field, index) => {
-                return (
-                    <div
-                        key={index}
-                        style={{ display: "flex", gap: "1rem", paddingLeft: "1rem" }}
-                    >
-                        <input
-                            type="checkbox"
-                            {...register(
-                                `questions.${questionIndex}.choices.${index}.selected`
-                            )}
-                        />
-                        <p>{field?.text}</p>
-                    </div>
-                );
-            })}
+        <div className="space-y-2">
+            {fields?.map((field, index) => (
+                <label
+                    key={index}
+                    className="flex items-center gap-3 cursor-pointer"
+                >
+                    <input
+                        type="checkbox"
+                        {...register(
+                            `questions.${questionIndex}.choices.${index}.selected`
+                        )}
+                        className="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    />
+                    <span className="text-gray-700">{field?.text}</span>
+                </label>
+            ))}
         </div>
     );
 }
 
-export default AttemptQuizForm;
+export default AttemptQuizForm

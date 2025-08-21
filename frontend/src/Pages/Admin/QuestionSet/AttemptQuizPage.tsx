@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import AttemptQuizForm from '../../../components/QuestionSet/AttemptQuizForm';
+import AttemptQuizForm from "../../../components/QuestionSet/AttemptQuizForm";
 
 export interface IAttempQuestionForm {
     _id: string;
@@ -29,8 +29,6 @@ function AttemptQuizPage() {
 
     const [questionSets, setQuestionSet] = useState<IAttempQuestionForm | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const Navigate = useNavigate();
-
     useEffect(() => {
         const accessToken = localStorage.getItem("token");
         if (!accessToken || !id) {
@@ -52,6 +50,7 @@ function AttemptQuizPage() {
                     setIsLoading(false);
                 })
                 .catch((error) => {
+                    console.log(error);
                     setIsLoading(false);
                 });
         }

@@ -1,8 +1,4 @@
-import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-
 function NotFound() {
-    const navigate = useNavigate();
 
     return (
         <div className="w-full h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
@@ -15,13 +11,6 @@ function NotFound() {
             <p className="text-gray-600 text-center mb-6 max-w-md">
                 Oops! The page you are looking for doesn’t exist or has been moved.
             </p>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={() => navigate("/")}
-            >
-                Go Back Home
-            </Button>
         </div>
     );
 }

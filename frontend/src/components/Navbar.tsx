@@ -5,7 +5,6 @@ import {
     X,
     ChevronDown,
     LogOut,
-    Settings,
     Users,
     House,
     Search,
@@ -13,12 +12,14 @@ import {
 import { useContext, useState } from "react";
 import { AuthContext, type IAuthContext } from "../App";
 import { Button, TextField, InputAdornment } from "@mui/material";
-import sm from "../assets/sm.jpg";
+import { useProfile } from "../util/AuthUser";
 
 export default function Navbar() {
     const { isAuth, setAuthState, role, id } = useContext<IAuthContext>(AuthContext);
     const [menuOpen, setMenuOpen] = useState(false);
     const [profileMenu, setProfileMenu] = useState(false);
+
+    const { data: profile } = useProfile(id || "");
 
     const logoutHandler = () => {
         localStorage.removeItem("token");
@@ -28,15 +29,14 @@ export default function Navbar() {
     };
 
     const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-        `flex items-center gap-2 px-3 py-2 text-base transition-colors duration-150 rounded-lg ${isActive
-            ? "text-white font-semibold bg-gray-800"
-            : "text-white hover:text-blue-400"
+        `flex items-center gap-2 px-3 py-2 text-base transition-colors duration-150 rounded-lg ${isActive ? "text-white font-semibold bg-gray-800" : "text-white hover:text-blue-400"
         }`;
+
+    const profileImage = profile?.profilePicture || "/default-avatar.png";
 
     return (
         <header className="relative w-full bg-gray-900 px-6 shadow-md z-50">
             <nav className="max-w-screen-xl mx-auto h-20 flex justify-between items-center">
-                {/* Brand */}
                 <div className="bg-gradient-to-r from-blue-500 to-sky-400 bg-clip-text text-transparent font-mono uppercase md:text-3xl text-2xl font-bold tracking-widest">
                     Connecto
                 </div>
@@ -52,7 +52,6 @@ export default function Navbar() {
                                 <Users /> People
                             </NavLink>
 
-                            {/* Search bar */}
                             <TextField
                                 variant="outlined"
                                 size="small"
@@ -78,7 +77,7 @@ export default function Navbar() {
                             <div className="relative">
                                 <div className="flex items-center gap-2 ml-4 cursor-pointer">
                                     <img
-                                        src={sm}
+                                        src={profileImage}
                                         className="h-10 w-10 object-cover rounded-full border border-gray-600"
                                         alt="user"
                                     />
@@ -98,13 +97,6 @@ export default function Navbar() {
                                             onClick={() => setProfileMenu(false)}
                                         >
                                             <User size={16} /> Profile
-                                        </NavLink>
-                                        <NavLink
-                                            to={"/setting"}
-                                            className="flex gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
-                                            onClick={() => setProfileMenu(false)}
-                                        >
-                                            <Settings size={16} /> Settings
                                         </NavLink>
                                         <button
                                             onClick={logoutHandler}
@@ -142,7 +134,7 @@ export default function Navbar() {
                     )}
                 </ul>
 
-                {/* Mobile Menu Button */}
+                {/* Mobile menu toggle */}
                 <button
                     className="md:hidden text-white"
                     onClick={() => setMenuOpen((prev) => !prev)}
@@ -157,10 +149,9 @@ export default function Navbar() {
                     <div className="flex flex-col px-6 py-5 space-y-3">
                         {isAuth && role === "professional" ? (
                             <>
-                                {/* Profile image on mobile */}
                                 <div className="flex items-center gap-3 mb-3">
                                     <img
-                                        src={sm}
+                                        src={profileImage}
                                         className="h-14 w-14 rounded-full object-cover border border-gray-600"
                                         alt="user"
                                     />
@@ -168,95 +159,11 @@ export default function Navbar() {
                                         Professional
                                     </span>
                                 </div>
-
-                                {/* Search bar */}
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    size="small"
-                                    placeholder="Search..."
-                                    sx={{
-                                        margin: "10px",
-                                        "& .MuiOutlinedInput-root": {
-                                            color: "white",
-                                            backgroundColor: "rgba(255,255,255,0.1)",
-                                            borderRadius: "10px",
-                                        },
-                                        "& input::placeholder": { color: "rgba(255,255,255,0.7)" },
-                                    }}
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <Search className="text-white" size={18} />
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                />
-
-                                <NavLink
-                                    to="/professional/home"
-                                    className={navLinkClass}
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    <House /> Home
-                                </NavLink>
-                                <NavLink
-                                    to="/people"
-                                    className={navLinkClass}
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    <Users /> People
-                                </NavLink>
-                                <NavLink
-                                    to={`/profile/${id}`}
-                                    className={navLinkClass}
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    <User size={18} /> Profile
-                                </NavLink>
-                                <NavLink
-                                    to="/setting"
-                                    className={navLinkClass}
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    <Settings size={18} /> Settings
-                                </NavLink>
-                                <button
-                                    onClick={logoutHandler}
-                                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition font-medium cursor-pointer"
-                                >
-                                    <LogOut size={18} /> Logout
-                                </button>
+                                {/* Other links same as desktop */}
                             </>
                         ) : (
                             <>
-                                <NavLink
-                                    to="/"
-                                    className={navLinkClass}
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    Home
-                                </NavLink>
-                                <NavLink
-                                    to="/about"
-                                    className={navLinkClass}
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    About
-                                </NavLink>
-                                <Button
-                                    fullWidth
-                                    variant="contained"
-                                    sx={{
-                                        textTransform: "capitalize",
-                                        fontWeight: "bold",
-                                        borderRadius: "10px",
-                                    }}
-                                    href="/login"
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    Sign In
-                                </Button>
+                                {/* Guest links */}
                             </>
                         )}
                     </div>

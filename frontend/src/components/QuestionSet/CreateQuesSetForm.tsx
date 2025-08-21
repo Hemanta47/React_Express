@@ -1,8 +1,27 @@
-import { Button, TextField } from "@mui/material";
+import {
+    Button,
+    TextField,
+    MenuItem,
+    Select,
+    InputLabel,
+    FormControl,
+    Card,
+    CardContent,
+    CardHeader,
+    Divider,
+} from "@mui/material";
 import axios from "axios";
-import { FormProvider, useFieldArray, useForm, useFormContext } from "react-hook-form";
+import { DeleteIcon, Trash } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+    FormProvider,
+    useFieldArray,
+    useForm,
+    useFormContext,
+} from "react-hook-form";
 
 interface QuestionSetForm {
+    optionId: string;
     title: string;
     questions: {
         questionText: string;
@@ -10,12 +29,32 @@ interface QuestionSetForm {
     }[];
 }
 
+interface Option {
+    _id: string;
+    name: string;
+    description: string
+}
+
 function CreateQuesSetForm() {
-    const defaultValues: QuestionSetForm = { title: "", questions: [] };
+    const defaultValues: QuestionSetForm = { optionId: "", title: "", questions: [] };
+    const [options, setOptions] = useState<Option[]>([])
     const methods = useForm({ defaultValues });
     const { handleSubmit, watch } = methods;
     console.log(watch());
     const accessToken = localStorage.getItem("token");
+
+
+    useEffect(() => {
+        async function fetch() {
+            const response = await axios.get("http://localhost:3000/api/options/", {
+                headers: { Authorization: `Bearer ${accessToken}` }
+            })
+
+            setOptions(response.data.data)
+        }
+
+        fetch()
+    }, [])
 
     const onSubmit = (data: QuestionSetForm) => {
         axios
@@ -27,23 +66,59 @@ function CreateQuesSetForm() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto mt-6 p-6 bg-white rounded-lg shadow-md shadow-black/60 max-h-[80vh] overflow-y-auto">
-            <FormProvider {...methods}>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    <TextField
-                        {...methods.register("title")}
-                        fullWidth
-                        variant="outlined"
-                        label="Title"
-                        placeholder="e.g., Basic JavaScript"
-                    />
-                    <CreateQuestion />
-                    <Button type="submit" variant="contained" color="primary">
-                        Create Question Set
-                    </Button>
-                </form>
-            </FormProvider>
-        </div>
+        <Card sx={{
+            overflow: "scroll"
+        }} className="shadow-md rounded-xl border border-gray-200 ">
+            <CardHeader
+                title="Create Question Set"
+                titleTypographyProps={{ className: "text-xl font-semibold" }}
+                className="border-b border-gray-100"
+            />
+            <CardContent>
+                <FormProvider {...methods}>
+                    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+                        {/* Option Select */}
+                        <FormControl fullWidth>
+                            <InputLabel id="option-label">Option</InputLabel>
+                            <Select
+                                fullWidth
+                                labelId="option-label"
+                                label="Option"
+                                {...methods.register("optionId")}
+                                defaultValue=""
+                            >
+                                {options.map((option) => (
+                                    <MenuItem key={option._id} value={option._id}>
+                                        {option.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
+                        {/* Title */}
+                        <TextField
+                            {...methods.register("title")}
+                            fullWidth
+                            variant="outlined"
+                            label="Title"
+                            placeholder="e.g., Basic JavaScript"
+                            size="small"
+                        />
+
+                        {/* Questions */}
+                        <CreateQuestion />
+
+                        <Divider />
+
+                        <div className="flex justify-end">
+                            <Button type="submit" variant="contained" color="primary">
+                                Create Question Set
+                            </Button>
+                        </div>
+                    </form>
+                </FormProvider>
+            </CardContent>
+        </Card>
     );
 }
 
@@ -53,25 +128,26 @@ function CreateQuestion() {
 
     return (
         <div className="space-y-4">
-            <h2 className="text-lg font-semibold my-3">Questions</h2>
+            <h2 className="text-base font-medium">Questions</h2>
             {fields.map((field, index) => (
                 <div
                     key={field.id}
-                    className="p-4 border rounded-lg bg-white shadow-sm space-y-3"
+                    className="p-4 border border-gray-200 rounded-lg relative"
                 >
-                    <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
                         <TextField
                             {...register(`questions.${index}.questionText`)}
                             fullWidth
                             placeholder="Enter Question"
+                            size="small"
                         />
                         <Button
                             type="button"
-                            variant="outlined"
+                            variant="text"
                             color="error"
                             onClick={() => remove(index)}
                         >
-                            Remove
+                            <Trash size={18} />
                         </Button>
                     </div>
                     <CreateChoices questionIndex={index} />
@@ -97,18 +173,16 @@ function CreateChoices({ questionIndex }: { questionIndex: number }) {
     });
 
     return (
-        <div className="space-y-2 mt-2">
+        <div className="space-y-2 mt-3 pl-2 border-l-2 border-gray-200">
             {fields.map((field, index) => (
-                <div
-                    key={field.id}
-                    className="flex items-center gap-2 bg-gray-50 p-2 rounded border"
-                >
+                <div key={field.id} className="flex items-center gap-2">
                     <TextField
                         {...register(`questions.${questionIndex}.choices.${index}.text`)}
                         placeholder="Enter Choice"
                         fullWidth
+                        size="small"
                     />
-                    <label className="flex items-center gap-1">
+                    <label className="flex items-center gap-1 text-sm">
                         <input
                             type="checkbox"
                             {...register(
@@ -119,20 +193,25 @@ function CreateChoices({ questionIndex }: { questionIndex: number }) {
                     </label>
                     <Button
                         type="button"
-                        variant="outlined"
+                        variant="text"
                         color="error"
                         onClick={() => remove(index)}
                     >
-                        Remove
+                        <DeleteIcon size={16} />
                     </Button>
                 </div>
             ))}
             <Button
                 type="button"
                 variant="outlined"
+                size="small"
                 color="primary"
                 onClick={() =>
-                    append({ text: "", label: fields.length.toString(), correctAnswer: false })
+                    append({
+                        text: "",
+                        label: fields.length.toString(),
+                        correctAnswer: false,
+                    })
                 }
             >
                 Add Choice

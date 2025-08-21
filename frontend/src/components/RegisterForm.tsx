@@ -4,10 +4,10 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Eye, EyeClosed } from "lucide-react";
 
-// ✅ Schema with confirm password
+// Schema with confirm password
 const userSchema = z
     .object({
         name: z.string().min(1, { message: "Name required" }),
@@ -24,6 +24,7 @@ type RegisterType = z.infer<typeof userSchema>;
 
 export default function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     const {
         register,
@@ -40,12 +41,13 @@ export default function RegisterForm() {
     });
 
     const onSubmit = (data: RegisterType) => {
-        const { confirmPassword, ...userData } = data; // don’t send confirmPassword
+        const { confirmPassword, ...userData } = data;
         axios
             .post("http://localhost:3000/users/create", userData)
             .then((res) => {
                 console.log(res.data);
                 alert("User Created");
+                window.location.href = ("/login")
             })
             .catch((err) => {
                 const errors = err.response?.data?.message || "An error occurred";

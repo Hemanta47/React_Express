@@ -6,6 +6,7 @@ async function listQuestionSetController(req, res) {
     {
       $project: {
         title: 1,
+        optionId: 1,
         questionCount: { $size: { $ifNull: ["$questions", []] } },
       },
     },
